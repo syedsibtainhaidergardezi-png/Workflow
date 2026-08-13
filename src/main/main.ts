@@ -2,7 +2,13 @@ import { BrowserWindow, app, globalShortcut } from 'electron';
 import { store } from './store';
 import { handleCapture, registerIpc } from './ipc';
 import { createTray, destroyTray, refreshTrayMenu } from './tray';
-import { createStickyWindow, createWhatsAppWindow, showWhatsApp, toggleSticky } from './windows';
+import {
+  browserUserAgent,
+  createStickyWindow,
+  createWhatsAppWindow,
+  showWhatsApp,
+  toggleSticky,
+} from './windows';
 import { appIcon } from './icon';
 
 const SWEEP_INTERVAL_MS = 60 * 60 * 1000;
@@ -25,6 +31,12 @@ function start(): void {
   // running window and the installed shortcut as two different apps, so a
   // taskbar pin sits next to the live window instead of becoming it.
   if (process.platform === 'win32') app.setAppUserModelId('com.workflow.sticky');
+
+  // Set globally rather than per-navigation: WhatsApp Web does its syncing
+  // over XHR and websockets after the page loads, and those requests use the
+  // session default. Setting it only on loadURL left the initial document
+  // claiming Chrome while every follow-up request still said Electron.
+  app.userAgentFallback = browserUserAgent();
 
   store.load();
   registerIpc();

@@ -1,4 +1,4 @@
-import { BrowserWindow, Menu, shell, type ContextMenuParams } from 'electron';
+import { BrowserWindow, Menu, app, shell, type ContextMenuParams } from 'electron';
 import path from 'node:path';
 import { CH, type MessageCapture } from '../shared/types';
 import { store } from './store';
@@ -6,11 +6,22 @@ import { store } from './store';
 const WHATSAPP_URL = 'https://web.whatsapp.com/';
 
 /**
- * WhatsApp Web refuses to load for clients it reads as unsupported, and
- * Electron's default UA advertises Electron. Pin a plain Chrome UA instead.
+ * WhatsApp Web gates behaviour on the browser it thinks it is talking to, and
+ * Electron's default UA advertises both the app name and Electron:
+ *
+ *   ...Chrome/150.0.7871.224 Workflow/0.1.0 Electron/43.4.0 Safari/537.36
+ *
+ * Drop those two tokens and the remainder is an honest, current Chrome UA.
+ * Hardcoding a version instead means quietly claiming a stale browser after
+ * every Electron upgrade, which is how this started out.
  */
-const CHROME_UA =
-  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36';
+export function browserUserAgent(): string {
+  const drop = [`${app.getName().toLowerCase()}/`, 'electron/'];
+  return app.userAgentFallback
+    .split(' ')
+    .filter((token) => !drop.some((prefix) => token.toLowerCase().startsWith(prefix)))
+    .join(' ');
+}
 
 let whatsappWindow: BrowserWindow | null = null;
 let stickyWindow: BrowserWindow | null = null;
@@ -48,7 +59,7 @@ export function createWhatsAppWindow(onCapture: (cap: MessageCapture) => void): 
     },
   });
 
-  whatsappWindow.loadURL(WHATSAPP_URL, { userAgent: CHROME_UA });
+  whatsappWindow.loadURL(WHATSAPP_URL);
 
   whatsappWindow.once('ready-to-show', () => whatsappWindow?.show());
 
