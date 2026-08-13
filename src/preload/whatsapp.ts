@@ -227,6 +227,11 @@ function toast(message: string): void {
   toastTimer = setTimeout(() => el?.classList.remove('wf-toast--on'), 2600);
 }
 
+/**
+ * Deliberately unlike WhatsApp's own chrome. These controls belong to
+ * Workflow, and the hard border and flat yellow read as "not part of this
+ * app" against both the light and dark WhatsApp themes.
+ */
 const STYLES = `
 .wf-pin {
   position: absolute;
@@ -234,51 +239,62 @@ const STYLES = `
   width: 26px;
   height: 26px;
   padding: 0;
-  border: 0;
-  border-radius: 50%;
-  background: rgba(32, 44, 51, 0.92);
-  color: #e9edef;
-  font-size: 13px;
-  line-height: 26px;
+  border: 2px solid #0d0d0b;
+  border-radius: 0;
+  background: #ffd62e;
+  color: #0d0d0b;
+  font-size: 12px;
+  line-height: 22px;
   text-align: center;
   cursor: pointer;
   opacity: 0;
-  transform: scale(0.85);
-  transition: opacity 120ms ease, transform 120ms ease, background 120ms ease;
+  box-shadow: 2px 2px 0 #0d0d0b;
+  transition: opacity 100ms linear;
   z-index: 20;
 }
-.wf-row--in  .wf-pin { right: -32px; }
-.wf-row--out .wf-pin { left: -32px; }
+.wf-row--in  .wf-pin { right: -34px; }
+.wf-row--out .wf-pin { left: -34px; }
 .wf-row:hover .wf-pin,
-.wf-pin:focus-visible { opacity: 1; transform: scale(1); }
-.wf-pin:hover { background: #25d366; }
-.wf-pin--saved { opacity: 1 !important; background: #25d366; transform: scale(1.12); }
+.wf-pin:focus-visible { opacity: 1; }
+.wf-pin:hover { background: #00e07a; }
+.wf-pin:active { transform: translate(2px, 2px); box-shadow: none; }
+.wf-pin--saved {
+  opacity: 1 !important;
+  background: #00e07a;
+  transform: translate(2px, 2px);
+  box-shadow: none;
+}
 
 .wf-flash {
-  animation: wf-flash-kf 2.4s ease-out;
-  border-radius: 8px;
+  animation: wf-flash-kf 2.4s steps(1, end);
+  outline: 3px solid #00e07a;
+  outline-offset: 2px;
 }
 @keyframes wf-flash-kf {
-  0%, 60% { background: rgba(37, 211, 102, 0.28); }
+  0%, 60% { background: rgba(0, 224, 122, 0.3); }
   100%    { background: transparent; }
 }
 
 .wf-toast {
   position: fixed;
   left: 50%;
-  bottom: 28px;
-  transform: translate(-50%, 12px);
+  bottom: 30px;
+  transform: translate(-50%, 10px);
   max-width: 70vw;
-  padding: 10px 16px;
-  border-radius: 999px;
-  background: rgba(32, 44, 51, 0.96);
-  color: #e9edef;
-  font-size: 13.5px;
+  padding: 10px 15px;
+  border: 3px solid #0d0d0b;
+  border-radius: 0;
+  background: #fffcf2;
+  color: #0d0d0b;
+  font-size: 12.5px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
   font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  box-shadow: 5px 5px 0 #0d0d0b;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 160ms ease, transform 160ms ease;
+  transition: opacity 120ms linear, transform 120ms linear;
   z-index: 10000;
 }
 .wf-toast--on { opacity: 1; transform: translate(-50%, 0); }

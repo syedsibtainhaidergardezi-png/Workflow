@@ -7,7 +7,9 @@ it scrolls away forever. Workflow puts a 📌 on every WhatsApp message — one
 click and it becomes a task on a small always-on-top note that stays in the
 corner of your screen until you tick it off.
 
-![the sticky board](docs/board.png)
+| Light | Dark |
+| :---: | :---: |
+| ![the sticky board, light](docs/board.png) | ![the sticky board, dark](docs/board-dark.png) |
 
 ---
 
@@ -124,7 +126,7 @@ markup at all.
 | --- | --- |
 | Jump back to the original message | Click the task text, or `Jump` |
 | Write what actually needs doing | `Note` — the note replaces the message as the headline, message stays as a quote |
-| Set a reminder | `Remind` → Today / Tomorrow / Next week / pick a date |
+| Set a reminder | `Due` → Today / Tomorrow / Next week / pick a date |
 | Keep something at the top | `Pin` |
 | Done | The checkbox |
 | Show/hide the board | `Ctrl+Shift+W`, the tray icon, or `✕` |

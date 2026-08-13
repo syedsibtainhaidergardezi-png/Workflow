@@ -186,12 +186,15 @@ function tools(task: WfTask): HTMLElement {
     return b;
   };
 
+  // Labels are kept to one short word each: five buttons wrapping onto a
+  // second row would reserve that height on every card, hovered or not.
+  // The longer explanation lives in the tooltip.
   row.append(
-    button(editingId === task.id ? 'Close' : task.note ? 'Edit note' : 'Note', 'Add your own note', () => {
+    button(editingId === task.id ? 'Close' : 'Note', 'Add your own note', () => {
       editingId = editingId === task.id ? null : task.id;
       paint(tasks);
     }),
-    button(task.dueAt === null ? 'Remind' : 'Reschedule', 'Set a due date', () => {
+    button('Due', 'Set a due date', () => {
       dueOpenId = dueOpenId === task.id ? null : task.id;
       paint(tasks);
     }),

@@ -1,29 +1,42 @@
+/*
+ * Neobrutalist board: hard black borders, zero radius, solid offset shadows,
+ * saturated flat colour. No gradients, no blur, no translucency.
+ *
+ * The constraint that shapes everything here is that this is a ~330px window
+ * floating over other work. Chunky styling eats space fast, so weights and
+ * borders are deliberately heavy while paddings stay tight, and every
+ * foreground/background pair is kept well clear of WCAG AA.
+ */
+
 :root {
-  --bg: rgba(24, 34, 40, 0.95);
-  --bg-solid: #182228;
-  --card: rgba(255, 255, 255, 0.045);
-  --card-hover: rgba(255, 255, 255, 0.08);
-  --text: #e9edef;
-  --muted: #93a3ad;
-  --faint: #6b7d88;
-  --line: rgba(255, 255, 255, 0.09);
-  --accent: #25d366;
-  --warn: #f5b544;
-  --danger: #f2635f;
-  --radius: 14px;
+  --paper: #fffcf2;
+  --card: #ffffff;
+  --card-done: #e7e4da;
+
+  --ink: #0d0d0b;
+  --ink-soft: #55524a;
+
+  --green: #00e07a;
+  --yellow: #ffd62e;
+  --coral: #ff5a5a;
+
+  --border: 2px;
+  --shadow-col: #0d0d0b;
 }
 
-@media (prefers-color-scheme: light) {
+@media (prefers-color-scheme: dark) {
   :root {
-    --bg: rgba(253, 250, 243, 0.97);
-    --bg-solid: #fdfaf3;
-    --card: rgba(17, 27, 33, 0.04);
-    --card-hover: rgba(17, 27, 33, 0.07);
-    --text: #1d272c;
-    --muted: #5f7078;
-    --faint: #8b9aa2;
-    --line: rgba(17, 27, 33, 0.1);
-    --accent: #0f9d58;
+    --paper: #191814;
+    --card: #24231d;
+    --card-done: #201f1a;
+
+    --ink: #fffcf2;
+    --ink-soft: #b3ae9e;
+
+    /* On a dark ground a black offset shadow disappears, so the shadow
+       becomes a dimmed cream — bright enough to read as a hard edge,
+       muted enough not to compete with the borders. */
+    --shadow-col: #d6d1be;
   }
 }
 
@@ -41,21 +54,21 @@ body {
 }
 
 body {
-  font: 13px/1.45 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  color: var(--text);
+  font: 500 13.5px/1.4 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  color: var(--ink);
   -webkit-font-smoothing: antialiased;
   user-select: none;
+  /* Room for the window's own offset shadow, which would otherwise clip. */
+  padding: 0 5px 5px 0;
 }
 
 .note {
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: var(--bg);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.42);
-  overflow: hidden;
+  background: var(--paper);
+  border: 3px solid var(--ink);
+  box-shadow: 5px 5px 0 var(--shadow-col);
 }
 
 /* ------------------------------------------------------------- title bar */
@@ -65,9 +78,9 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  padding: 9px 8px 9px 12px;
-  border-bottom: 1px solid var(--line);
-  /* The whole bar drags the window; buttons opt back out below. */
+  padding: 7px 7px 7px 11px;
+  background: var(--green);
+  border-bottom: 3px solid var(--ink);
   -webkit-app-region: drag;
 }
 
@@ -75,52 +88,71 @@ body {
   display: flex;
   align-items: center;
   gap: 7px;
-  font-weight: 600;
-  font-size: 12.5px;
-  letter-spacing: 0.2px;
+  /* Black on the green accent regardless of theme — the accent never flips. */
+  color: #0d0d0b;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
 }
 
 .dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--accent);
+  width: 10px;
+  height: 10px;
+  background: #0d0d0b;
   flex: none;
 }
 
 .count {
-  color: var(--faint);
-  font-weight: 500;
+  min-width: 19px;
+  height: 19px;
+  padding: 0 5px;
+  background: #0d0d0b;
+  color: var(--green);
+  border-radius: 0;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 19px;
+  text-align: center;
+}
+
+.count:empty {
+  display: none;
 }
 
 .bar__actions {
   display: flex;
-  gap: 2px;
+  gap: 5px;
   -webkit-app-region: no-drag;
 }
 
 .icon {
-  width: 24px;
-  height: 24px;
-  border: 0;
-  border-radius: 7px;
-  background: transparent;
-  color: var(--muted);
-  font-size: 11.5px;
+  width: 23px;
+  height: 23px;
+  padding: 0;
+  border: 2px solid #0d0d0b;
+  background: #fffcf2;
+  color: #0d0d0b;
+  font-size: 10px;
   line-height: 1;
   cursor: pointer;
-  opacity: 0.75;
-  transition: background 120ms ease, opacity 120ms ease;
+  box-shadow: 2px 2px 0 #0d0d0b;
+  transition: none;
 }
 
 .icon:hover {
-  background: var(--card-hover);
-  opacity: 1;
+  background: var(--yellow);
+}
+
+/* Everything clickable physically depresses into its own shadow. */
+.icon:active {
+  transform: translate(2px, 2px);
+  box-shadow: none;
 }
 
 .icon[aria-pressed='true'] {
-  opacity: 1;
-  background: rgba(37, 211, 102, 0.18);
+  background: #0d0d0b;
+  filter: none;
 }
 
 /* ----------------------------------------------------------------- list */
@@ -129,29 +161,43 @@ body {
   flex: 1;
   overflow-y: auto;
   overscroll-behavior: contain;
-  padding: 6px;
+  padding: 8px 8px 2px;
 }
 
+/* Chunky enough to belong, thin enough not to read as a second sidebar. */
 .list::-webkit-scrollbar {
-  width: 8px;
+  width: 9px;
+}
+
+.list::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 .list::-webkit-scrollbar-thumb {
-  background: var(--line);
-  border-radius: 4px;
+  background: var(--ink);
+  border: 2px solid var(--paper);
+}
+
+.list::-webkit-scrollbar-thumb:hover {
+  background: var(--ink-soft);
 }
 
 .empty {
-  padding: 34px 20px;
+  padding: 30px 16px;
   text-align: center;
-  color: var(--faint);
+  color: var(--ink-soft);
   font-size: 12.5px;
-  line-height: 1.7;
+  font-weight: 600;
+  line-height: 1.9;
 }
 
 .empty b {
-  color: var(--muted);
-  font-weight: 600;
+  display: inline-block;
+  padding: 1px 6px;
+  background: var(--yellow);
+  border: 2px solid var(--ink);
+  color: var(--ink);
+  font-weight: 800;
 }
 
 /* ----------------------------------------------------------------- card */
@@ -160,52 +206,145 @@ body {
   position: relative;
   display: grid;
   grid-template-columns: auto 1fr;
-  gap: 9px;
-  padding: 9px 10px;
-  margin-bottom: 4px;
-  border-radius: 10px;
+  gap: 8px;
+  padding: 8px 9px;
+  margin-bottom: 8px;
   background: var(--card);
-  cursor: default;
-  transition: background 120ms ease;
+  border: var(--border) solid var(--ink);
+  box-shadow: 3px 3px 0 var(--shadow-col);
 }
 
-.task:hover {
-  background: var(--card-hover);
-}
-
+/* Pinned reads instantly as a block of colour rather than a subtle marker.
+   Black on this yellow is ~13:1, so the text gets louder, not weaker. */
 .task--pinned {
-  box-shadow: inset 2px 0 0 var(--warn);
+  background: var(--yellow);
+  color: #0d0d0b;
 }
 
-.task--done .task__body {
-  opacity: 0.45;
+.task--pinned .task__text,
+.task--pinned .task__who,
+.task--pinned .task__meta,
+.task--pinned .task__quote {
+  color: #0d0d0b;
+}
+
+.task--pinned .task__quote {
+  border-left-color: #0d0d0b;
+}
+
+/*
+ * The pinned card is yellow in both themes, so anything nested inside it has
+ * to opt out of the surrounding scheme. Without this, dark mode paints a
+ * cream chip onto cream and a dark checkbox that reads as already ticked.
+ */
+.task--pinned .check {
+  background: #fffcf2;
+  border-color: #0d0d0b;
+}
+
+.task--pinned .check:checked {
+  background: var(--green);
+}
+
+.task--pinned .due {
+  background: #fffcf2;
+  border-color: #0d0d0b;
+  color: #0d0d0b;
+}
+
+/* Yellow-on-yellow would vanish, so due-today inverts on a pinned card. */
+.task--pinned .due--today {
+  background: #0d0d0b;
+  color: var(--yellow);
+}
+
+.task--pinned .due--over {
+  background: var(--coral);
+  color: #0d0d0b;
+}
+
+.task--pinned .tool {
+  background: #fffcf2;
+  border-color: #0d0d0b;
+  color: #0d0d0b;
+  box-shadow: 2px 2px 0 #0d0d0b;
+}
+
+.task--pinned .tool:hover {
+  background: var(--green);
+}
+
+.task--pinned .tool--danger:hover {
+  background: var(--coral);
+}
+
+.task--pinned .note-input,
+.task--pinned .duebar,
+.task--pinned .duebar input[type='date'] {
+  background: #fffcf2;
+  border-color: #0d0d0b;
+  color: #0d0d0b;
+  color-scheme: light;
+}
+
+.task--done {
+  background: var(--card-done);
+  box-shadow: none;
 }
 
 .task--done .task__text {
   text-decoration: line-through;
+  text-decoration-thickness: 2px;
+  color: var(--ink-soft);
 }
 
 .task--flash {
-  animation: flash 1.6s ease-out;
+  animation: flash 1.4s steps(1, end);
 }
 
 @keyframes flash {
   0%,
-  50% {
-    background: rgba(37, 211, 102, 0.24);
+  40% {
+    background: var(--green);
   }
   100% {
     background: var(--card);
   }
 }
 
+/* Custom square checkbox — the native control has no neobrutalist mode. */
 .check {
-  width: 16px;
-  height: 16px;
-  margin-top: 2px;
-  accent-color: var(--accent);
+  appearance: none;
+  -webkit-appearance: none;
+  position: relative;
+  width: 18px;
+  height: 18px;
+  margin: 1px 0 0;
+  background: var(--card);
+  border: var(--border) solid var(--ink);
   cursor: pointer;
   flex: none;
+}
+
+.check:checked {
+  background: var(--green);
+}
+
+.check:checked::after {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 0;
+  width: 5px;
+  height: 10px;
+  border: solid #0d0d0b;
+  border-width: 0 3px 3px 0;
+  transform: rotate(45deg);
+}
+
+.check:focus-visible {
+  outline: 3px solid var(--coral);
+  outline-offset: 1px;
 }
 
 .task__body {
@@ -213,24 +352,33 @@ body {
 }
 
 .task__text {
-  font-size: 12.8px;
-  color: var(--text);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.36;
+  color: var(--ink);
   white-space: pre-wrap;
   overflow-wrap: anywhere;
   display: -webkit-box;
-  -webkit-line-clamp: 4;
+  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
   user-select: text;
   cursor: pointer;
 }
 
+.task__text:hover {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 2px;
+}
+
 .task__quote {
-  margin-top: 4px;
+  margin-top: 5px;
   padding-left: 7px;
-  border-left: 2px solid var(--line);
+  border-left: 3px solid var(--ink-soft);
   font-size: 11.5px;
-  color: var(--faint);
+  font-weight: 500;
+  color: var(--ink-soft);
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -241,47 +389,51 @@ body {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   margin-top: 5px;
-  font-size: 11px;
-  color: var(--faint);
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--ink-soft);
 }
 
+/* Sender/chat stays sentence case: uppercasing real names costs legibility
+   for no gain, so only the machine-ish labels get the treatment. */
 .task__who {
-  color: var(--muted);
-  font-weight: 500;
+  color: var(--ink);
+  font-weight: 700;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  max-width: 55%;
+  max-width: 58%;
 }
 
 .due {
-  padding: 1px 7px;
-  border-radius: 999px;
-  background: var(--card-hover);
-  font-size: 10.5px;
-  font-weight: 600;
-  letter-spacing: 0.2px;
+  padding: 1px 5px;
+  background: var(--card);
+  border: 2px solid var(--ink);
+  color: var(--ink);
+  font-size: 9.5px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .due--today {
-  background: rgba(245, 181, 68, 0.18);
-  color: var(--warn);
+  background: var(--yellow);
+  color: #0d0d0b;
 }
 
 .due--over {
-  background: rgba(242, 99, 95, 0.18);
-  color: var(--danger);
+  background: var(--coral);
+  color: #0d0d0b;
 }
 
-/* actions revealed on hover, so the resting board stays quiet */
 .task__tools {
   display: flex;
-  gap: 1px;
+  flex-wrap: wrap;
+  gap: 4px;
   margin-top: 5px;
   opacity: 0;
-  transition: opacity 120ms ease;
 }
 
 .task:hover .task__tools,
@@ -291,61 +443,77 @@ body {
 }
 
 .tool {
-  padding: 2px 7px;
-  border: 0;
-  border-radius: 6px;
-  background: transparent;
-  color: var(--faint);
-  font-size: 11px;
+  padding: 1px 5px;
+  background: var(--card);
+  border: 2px solid var(--ink);
+  color: var(--ink);
   font-family: inherit;
+  font-size: 9.5px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
   cursor: pointer;
+  box-shadow: 2px 2px 0 var(--ink);
 }
 
 .tool:hover {
-  background: var(--card-hover);
-  color: var(--text);
+  background: var(--green);
+  color: #0d0d0b;
+}
+
+.tool:active {
+  transform: translate(2px, 2px);
+  box-shadow: none;
 }
 
 .tool--danger:hover {
-  color: var(--danger);
+  background: var(--coral);
 }
 
 .note-input {
   width: 100%;
-  margin-top: 6px;
+  margin-top: 7px;
   padding: 6px 8px;
-  border: 1px solid var(--line);
-  border-radius: 7px;
-  background: var(--bg-solid);
-  color: var(--text);
+  background: var(--card);
+  border: 2px solid var(--ink);
+  color: var(--ink);
   font: inherit;
-  font-size: 12.3px;
+  font-size: 13px;
   resize: vertical;
-  min-height: 52px;
+  min-height: 54px;
   user-select: text;
+  box-shadow: inset 2px 2px 0 rgba(13, 13, 11, 0.11);
 }
 
 .note-input:focus {
-  outline: none;
-  border-color: var(--accent);
+  outline: 3px solid var(--green);
+  outline-offset: 0;
+}
+
+.note-input::placeholder {
+  color: var(--ink-soft);
+  font-weight: 600;
 }
 
 .duebar {
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
-  margin-top: 6px;
+  margin-top: 7px;
+  padding: 6px;
+  background: var(--paper);
+  border: 2px solid var(--ink);
 }
 
 .duebar input[type='date'] {
-  padding: 2px 6px;
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  background: var(--bg-solid);
-  color: var(--text);
+  padding: 1px 4px;
+  background: var(--card);
+  border: 2px solid var(--ink);
+  color: var(--ink);
   font: inherit;
-  font-size: 11px;
-  color-scheme: dark light;
+  font-size: 10.5px;
+  font-weight: 700;
+  color-scheme: light dark;
 }
 
 /* ---------------------------------------------------------------- footer */
@@ -355,26 +523,36 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  padding: 7px 11px;
-  border-top: 1px solid var(--line);
+  padding: 7px 10px;
+  background: var(--paper);
+  border-top: 3px solid var(--ink);
 }
 
 .link {
   border: 0;
   background: transparent;
-  color: var(--muted);
+  color: var(--ink);
   font: inherit;
-  font-size: 11.5px;
+  font-size: 10.5px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
   cursor: pointer;
   padding: 0;
 }
 
+.link:empty {
+  display: none;
+}
+
 .link:hover {
-  color: var(--text);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
 }
 
 .link--muted {
-  color: var(--faint);
+  color: var(--ink-soft);
 }
 
 .foot:not(.foot--has-done) .link--muted {

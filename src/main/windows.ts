@@ -130,8 +130,10 @@ export function createStickyWindow(): BrowserWindow {
   const saved = settings.stickyBounds;
 
   stickyWindow = new BrowserWindow({
-    width: saved?.width ?? 330,
-    height: saved?.height ?? 460,
+    // Heavier borders and shadows need a little more canvas than the old
+    // flat design did, or only two tasks fit before scrolling.
+    width: saved?.width ?? 365,
+    height: saved?.height ?? 525,
     x: saved?.x,
     y: saved?.y,
     minWidth: 260,
@@ -157,6 +159,14 @@ export function createStickyWindow(): BrowserWindow {
 
   stickyWindow.loadFile(path.join(__dirname, '../renderer/sticky/index.html'));
   stickyWindow.setOpacity(settings.opacity);
+
+  // Chromium persists zoom level per origin across restarts. On a board sized
+  // to the pixel that turns a stray ctrl+scroll into a permanently broken
+  // layout with no visible way back, so pin it and refuse pinch zoom.
+  stickyWindow.webContents.setVisualZoomLevelLimits(1, 1);
+  stickyWindow.webContents.on('did-finish-load', () => {
+    stickyWindow?.webContents.setZoomFactor(1);
+  });
 
   // `screen-saver` keeps it above full-screen apps too, which is the whole
   // point of a sticky note you're supposed to notice.
