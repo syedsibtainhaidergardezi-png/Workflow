@@ -21,6 +21,11 @@ if (!app.requestSingleInstanceLock()) {
 }
 
 function start(): void {
+  // Must match `appId` in electron-builder.yml. Without it Windows treats the
+  // running window and the installed shortcut as two different apps, so a
+  // taskbar pin sits next to the live window instead of becoming it.
+  if (process.platform === 'win32') app.setAppUserModelId('com.workflow.sticky');
+
   store.load();
   registerIpc();
 
