@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:;"
+    />
+    <title>Workflow</title>
+    <link rel="stylesheet" href="sticky.css" />
+  </head>
+  <body>
+    <div class="note">
+      <header class="bar">
+        <div class="bar__title">
+          <span class="dot" aria-hidden="true"></span>
+          <span>Workflow</span>
+          <span class="count" id="count"></span>
+        </div>
+        <div class="bar__actions">
+          <button class="icon" id="pin" title="Keep on top of other windows">📌</button>
+          <button class="icon" id="whatsapp" title="Open WhatsApp">💬</button>
+          <button class="icon" id="hide" title="Hide board (Ctrl+Shift+W)">✕</button>
+        </div>
+      </header>
+
+      <main class="list" id="list"></main>
+
+      <footer class="foot">
+        <button class="link" id="toggle-done"></button>
+        <button class="link link--muted" id="clear-done">Clear done</button>
+      </footer>
+    </div>
+
+    <script src="sticky.js"></script>
+  </body>
+</html>

@@ -1,0 +1,15 @@
+appId: com.workflow.sticky
+productName: Workflow
+directories:
+  output: release
+files:
+  - dist/**/*
+  - package.json
+win:
+  target: nsis
+mac:
+  target: dmg
+  category: public.app-category.productivity
+linux:
+  target: AppImage
+  category: Utility
