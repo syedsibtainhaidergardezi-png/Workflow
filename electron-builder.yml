@@ -1,15 +1,44 @@
 appId: com.workflow.sticky
 productName: Workflow
+copyright: Copyright © 2026 Syed Sibtain Haider Gardezi
+
 directories:
   output: release
+  buildResources: build
+
+# Only the compiled output ships. src/, scripts/ and node_modules dev tooling
+# are left out, which is most of the install size.
 files:
   - dist/**/*
   - package.json
+
 win:
   target: nsis
+  icon: build/icon.ico
+  # Unsigned builds trip SmartScreen on first run. Signing needs a paid
+  # certificate; for a personal build, "More info -> Run anyway" is the answer.
+
+nsis:
+  # A guided installer rather than one-click, so the install location can be
+  # moved off a full system drive.
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  perMachine: false
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: Workflow
+  # Keeps the install path stable across versions, so a taskbar pin survives
+  # an upgrade instead of pointing at a stale folder.
+  installerIcon: build/icon.ico
+  uninstallerIcon: build/icon.ico
+  artifactName: ${productName}-Setup-${version}.${ext}
+
 mac:
   target: dmg
+  icon: build/icon.png
   category: public.app-category.productivity
+
 linux:
   target: AppImage
+  icon: build/icon.png
   category: Utility

@@ -45,11 +45,68 @@ npm start
 Two windows open: WhatsApp Web (scan the QR the first time) and the sticky
 board. Your login persists between runs.
 
-To build a real installer for your OS:
+That's **dev mode** — it runs from source and needs a terminal. For everyday
+use you want a real installed app.
+
+---
+
+## Installing it properly
 
 ```bash
-npm run dist          # -> release/  (nsis on Windows, dmg on macOS, AppImage on Linux)
+npm run dist
 ```
+
+This writes an installer to `release/`:
+
+| OS | Artifact | Installer | Installed |
+| --- | --- | --- | --- |
+| Windows | `Workflow-Setup-0.1.0.exe` | ~100 MB | ~260 MB |
+| macOS | `Workflow-0.1.0.dmg` | ~100 MB | ~260 MB |
+| Linux | `Workflow-0.1.0.AppImage` | 103 MB | — (single file) |
+
+Run it and you get a normal application: Start Menu / Applications entry, its
+own icon, pinnable to the taskbar or dock, no terminal and no Node needed. The
+installer is a guided one, so **you can point it at another drive** if your
+system drive is tight.
+
+**Windows will show a SmartScreen warning** ("Windows protected your PC") the
+first time. That's expected — the build is unsigned, and silencing it requires
+a paid code-signing certificate. Click *More info → Run anyway*.
+
+### Updating it
+
+There's no auto-update. To ship yourself a new version:
+
+```bash
+git pull                       # or just edit the code
+npm version patch              # 0.1.0 -> 0.1.1
+npm run dist
+```
+
+Then run the new installer. It upgrades in place over the old version — your
+tasks and your WhatsApp login are untouched, because both live in the user data
+directory rather than the install directory.
+
+**Keep the install path the same each time** and your taskbar pin keeps
+working; the installer remembers the previous location and pre-fills it. Point
+it somewhere new and you'll need to re-pin.
+
+If you later want real auto-update, that's `electron-updater` plus a release
+feed. Worth knowing up front: with a **private** repo, the GitHub feed needs a
+token embedded in the shipped app, so the usual answers are to make the repo
+public, publish releases from a separate public repo, or host the feed
+yourself.
+
+### Regenerating the icon
+
+The icon is generated from code — there are no binary source assets:
+
+```bash
+npm run icons          # rewrites build/icon.ico and build/icon.png
+```
+
+Edit the design in `scripts/make-icons.mjs`. It also prints the base64 string
+for the tray icon in `src/main/icon.ts`.
 
 ---
 

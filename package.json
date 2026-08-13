@@ -3,6 +3,7 @@
   "productName": "Workflow",
   "version": "0.1.0",
   "description": "Turn WhatsApp messages into desktop sticky notes.",
+  "author": "Syed Sibtain Haider Gardezi",
   "license": "MIT",
   "private": true,
   "main": "dist/main/main.js",
@@ -13,6 +14,7 @@
     "watch": "tsc -p tsconfig.json --watch",
     "clean": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\"",
     "typecheck": "tsc -p tsconfig.json --noEmit",
+    "icons": "node scripts/make-icons.mjs",
     "dist": "npm run build && electron-builder"
   },
   "devDependencies": {
